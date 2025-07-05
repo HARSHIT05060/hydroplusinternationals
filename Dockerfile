@@ -25,18 +25,18 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy application code
 COPY . /var/www
 
-# Install Laravel dependencies
+# Install Laravel dependencies (without dev packages)
 RUN composer install --no-dev --optimize-autoloader
 
-# Set proper permissions
+# Set correct permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Run post-deploy Laravel setup commands (IMPORTANT)
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+# Do NOT run artisan cache commands here, as .env is not available yet
+# Render injects env vars at runtime, not build time
 
-# Expose correct port
+# Expose correct port for Laravel dev server (Render uses $PORT)
 EXPOSE 8000
 
-# Start Laravel server (Render sets $PORT automatically)
+# Start Laravel development server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
