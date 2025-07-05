@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: hydroplusinternationals
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: (leave blank for now — generate later)
+      - key: APP_DEBUG
+        value: false
